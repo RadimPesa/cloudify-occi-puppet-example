@@ -1,6 +1,6 @@
 # Cloudify PoC blueprints for OCCI and Puppet
 
-This is an example of two node deployment of Apache and PostgreSQL
+This is an example of two nodes deployment of Apache and PostgreSQL
 started via FedCloud OCCI. Service deployment is managed by custom
 Puppet interface which supports r10k (Puppetfile), Hiera bindings
 and access to Cloudify context (ctx). Tested on CentOS 7.x.
