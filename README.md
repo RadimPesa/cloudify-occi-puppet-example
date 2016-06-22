@@ -27,11 +27,21 @@ First get valid X.509 VOMS certificate into `/tmp/x509up_u1000`.
 ```bash
 source ~/cfy/bin/activate
 make cfy-deploy
-cfy local outputs
 ```
 
-Open provided endpoint URL and see working connection between
-webserver and database.
+If succeeded, see deployed Apache endpoint URL. E.g.:
+
+```bash
+cfy local outputs
+{
+  "endpoint": {
+    "url": "http://147.228.242.209"
+  }
+}
+```
+
+and open provided URL in your browser to see working
+connection between webserver and database.
 
 ## With Cloudify Manager
 
