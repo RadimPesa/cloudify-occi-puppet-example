@@ -7,7 +7,7 @@ started via FedCloud OCCI. Service deployment is managed by custom
 Puppet interface which supports r10k (Puppetfile), Hiera bindings
 and access to Cloudify context (ctx). Tested on CentOS 7.x.
 
-## Standalone cloudify
+## Standalone Cloudify
 
 #### Setup OCCI CLI
 
@@ -46,6 +46,6 @@ cfy local outputs
 and open provided URL in your browser to see working
 connection between webserver and database.
 
-## With Cloudify Manager
+## Cloudify Manager
 
 Blueprint is ready for Cloudify Manager.
