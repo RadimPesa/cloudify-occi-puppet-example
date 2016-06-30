@@ -5,10 +5,13 @@ M4BLUEPRINT=$(BLUEPRINT).m4
 CFM_BLUEPRINT=example
 CFM_DEPLOYMENT=example
 RETRIES=10
-VIRTUALENV=~/cfy
+VIRTUAL_ENV?=~/cfy
 
+.PHONY: blueprints inputs validate test clean
 
 # blueprints
+blueprints: cfy-$(BLUEPRINT) cfm-$(BLUEPRINT)
+
 cfy-$(BLUEPRINT): $(M4BLUEPRINT)
 	m4 $? >".$@"
 	mv ".$@" $@
@@ -18,6 +21,8 @@ cfm-$(BLUEPRINT): $(M4BLUEPRINT)
 	mv ".$@" $@
 
 # inputs
+inputs: cfy-$(INPUTS) cfm-$(INPUTS)
+
 cfy-$(INPUTS): $(M4INPUTS) resources/ssh/id_rsa
 	m4 $(M4INPUTS) >".$@"
 	mv ".$@" $@
@@ -30,8 +35,10 @@ validate: cfy-$(BLUEPRINT) cfm-$(BLUEPRINT)
 	cfy blueprints validate -p cfy-$(BLUEPRINT)
 	cfy blueprints validate -p cfm-$(BLUEPRINT)
 
+test: validate inputs cfy-init clean
+
 clean:
-	rm -rf cfy-$(INPUTS) .cfy-$(INPUTS) cfm-$(INPUTS) .cfm-$(INPUTS) cfy-$(BLUEPRINT) .cfy-$(BLUEPRINT) cfm-$(BLUEPRINT) .cfm-$(BLUEPRINT) resources/puppet.tar.gz resources/ssh/ local-storage/
+	-rm -rf cfy-$(INPUTS) .cfy-$(INPUTS) cfm-$(INPUTS) .cfm-$(INPUTS) cfy-$(BLUEPRINT) .cfy-$(BLUEPRINT) cfm-$(BLUEPRINT) .cfm-$(BLUEPRINT) resources/puppet.tar.gz resources/ssh/ local-storage/
 
 cfy-deploy: cfy-init cfy-exec-install
 
@@ -83,7 +90,8 @@ cfm-clean:
 
 bootstrap:
 	test -f get-cloudify.py && unlink get-cloudify.py || /bin/true
-	yum install -y python-virtualenv python-pip
+	which virtualenv || ( yum install -y python-virtualenv || apt-get install -y python-virtualenv )
+	which pip || ( yum install -y python-pip || apt-get install -y python-pip )
 	wget -O get-cloudify.py 'http://repository.cloudifysource.org/org/cloudify3/get-cloudify.py'
-	python get-cloudify.py -e $(VIRTUALENV)
+	python get-cloudify.py -e $(VIRTUAL_ENV)
 	unlink get-cloudify.py

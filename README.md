@@ -1,5 +1,7 @@
 # Cloudify PoC blueprints for OCCI and Puppet
 
+[![Build Status](https://travis-ci.org/vholer/cloudify-occi-puppet-example.svg?branch=master)](https://travis-ci.org/vholer/cloudify-occi-puppet-example)
+
 This is an example of two nodes deployment of Apache and PostgreSQL
 started via FedCloud OCCI. Service deployment is managed by custom
 Puppet interface which supports r10k (Puppetfile), Hiera bindings
