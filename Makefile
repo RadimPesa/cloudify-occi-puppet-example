@@ -10,24 +10,28 @@ VIRTUALENV=~/cfy
 
 # blueprints
 cfy-$(BLUEPRINT): $(M4BLUEPRINT)
-	m4 $? >$@
+	m4 $? >".$@"
+	mv ".$@" $@
 
 cfm-$(BLUEPRINT): $(M4BLUEPRINT)
-	m4 -D_CFM_ $? >$@
+	m4 -D_CFM_ $? >".$@"
+	mv ".$@" $@
 
 # inputs
 cfy-$(INPUTS): $(M4INPUTS) resources/ssh/id_rsa
-	m4 $(M4INPUTS) >$@
+	m4 $(M4INPUTS) >".$@"
+	mv ".$@" $@
 
 cfm-$(INPUTS): $(M4INPUTS) resources/ssh/id_rsa
-	m4 -D_CFM_ -D_CFM_BLUEPRINT_=$(CFM_BLUEPRINT) $(M4INPUTS) >$@
+	m4 -D_CFM_ -D_CFM_BLUEPRINT_=$(CFM_BLUEPRINT) $(M4INPUTS) >".$@"
+	mv ".$@" $@
 
 validate: cfy-$(BLUEPRINT) cfm-$(BLUEPRINT)
 	cfy blueprints validate -p cfy-$(BLUEPRINT)
 	cfy blueprints validate -p cfm-$(BLUEPRINT)
 
 clean:
-	rm -rf cfy-$(INPUTS) cfm-$(INPUTS) cfy-$(BLUEPRINT) cfm-$(BLUEPRINT) resources/puppet.tar.gz resources/ssh/ local-storage/
+	rm -rf cfy-$(INPUTS) .cfy-$(INPUTS) cfm-$(INPUTS) .cfm-$(INPUTS) cfy-$(BLUEPRINT) .cfy-$(BLUEPRINT) cfm-$(BLUEPRINT) .cfm-$(BLUEPRINT) resources/puppet.tar.gz resources/ssh/ local-storage/
 
 cfy-deploy: cfy-init cfy-exec-install
 

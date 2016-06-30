@@ -22,7 +22,8 @@ make bootstrap
 
 #### Run deployment
 
-First get valid X.509 VOMS certificate into `/tmp/x509up_u1000`.
+First get valid X.509 VOMS certificate into `/tmp/x509up_u1000` and
+have `m4` installed.
 
 ```bash
 source ~/cfy/bin/activate
