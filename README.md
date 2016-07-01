@@ -46,6 +46,12 @@ cfy local outputs
 and open provided URL in your browser to see working
 connection between webserver and database.
 
+#### Destroy deployment
+
+```bash
+make cfy-undeploy
+```
+
 ## Cloudify Manager
 
 Blueprint is ready for Cloudify Manager.
