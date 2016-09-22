@@ -52,7 +52,7 @@ function puppet_hiera() {
   - 'common'
 EOF
 
-    HIERA_DATA=$(ctx --json-output ${CTX_SIDE} node properties 'puppet_config.hiera')
+    HIERA_DATA=$(ctx --json-output ${CTX_SIDE} node properties 'puppet_config.hiera' 2>/dev/null)
     if [ "x${HIERA_DATA}" != 'x' ]; then
         echo "${HIERA_DATA}" >"${1}/common.json"
     fi
@@ -86,7 +86,7 @@ install_pc1_agent
 
 CTX_TYPE=$(ctx type)
 CTX_OPERATION_NAME=$(ctx operation name | rev | cut -d. -f1 | rev)
-MANIFEST="${manifest:-$(ctx ${CTX_SIDE} node properties "puppet_config.manifests.${CTX_OPERATION_NAME}")}"
+MANIFEST="${manifest:-$(ctx ${CTX_SIDE} node properties "puppet_config.manifests.${CTX_OPERATION_NAME}" 2>/dev/null)}"
 if [ "x${MANIFEST}" = 'x' ]; then
     ctx logger info 'Skipping lifecycle operation, no Puppet manifest'
     exit
