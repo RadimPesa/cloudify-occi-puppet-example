@@ -1,11 +1,11 @@
-# Cloudify PoC blueprints for OCCI and Puppet
+# One Node Scipion Web Tools Portal
 
-[![Build Status](https://travis-ci.org/vholer/cloudify-occi-puppet-example.svg?branch=master)](https://travis-ci.org/vholer/cloudify-occi-puppet-example)
-
-This is an example of two nodes deployment of Apache and PostgreSQL
+This is an example of deployment of one node Scipion Web Tools portal
 started via FedCloud OCCI. Service deployment is managed by custom
 Puppet interface which supports r10k (Puppetfile), Hiera bindings
 and access to Cloudify context (ctx). Tested on CentOS 7.x.
+
+This example was prepared for purposes of Cloud Orchestration Training  organized by MU within H2020 West-Life project.
 
 ## Standalone Cloudify
 
@@ -51,7 +51,3 @@ connection between webserver and database.
 ```bash
 make cfy-undeploy
 ```
-
-## Cloudify Manager
-
-Blueprint is ready for Cloudify Manager.

@@ -25,14 +25,8 @@ cc_private_key_filename: 'ifdef(`_CFM_',`/opt/manager/resources/blueprints/_CFM_
 
 # Instance template/sizing
 os_tpl: 'uuid_egi_centos_7_fedcloud_warg_149'
-resource_tpl: 'small'
-
-
-############################################
-# Application
-
-db_name: myappdb
-db_user: myapp
-db_password: mypassword
+#os_tpl: 'uuid_enmr_centos_7_fedcloud_warg_152'
+#resource_tpl: 'small'
+resource_tpl:  'extra_large'
 
 # vim: set syntax=yaml

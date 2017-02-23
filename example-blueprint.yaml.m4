@@ -55,14 +55,6 @@ inputs:
   resource_tpl:
     type: string
 
-  # Application params
-  db_name: 
-    type: string
-  db_user:
-    type: string
-  db_password:
-    type: string
-
 dsl_definitions:
   occi_configuration: &occi_configuration
     endpoint: { get_input: occi_endpoint }
@@ -93,7 +85,7 @@ dsl_definitions:
     download: resources/puppet.tar.gz
 
 node_templates:
-  webNode:
+  scipionNode:
     type: _NODE_SERVER_
     properties:
       name: 'Cloudify example web node'
@@ -105,70 +97,31 @@ node_templates:
       occi_config: *occi_configuration
       fabric_env:
         <<: *fabric_env
-        host_string: { get_attribute: [webNode, ip] } # req. by relationship ref.
+        host_string: { get_attribute: [scipionNode, ip] } # req. by relationship ref.
 
-  dbNode:
-    type: _NODE_SERVER_
-    properties:
-      name: 'Cloudify example db. node'
-      resource_config:
-        os_tpl: { get_input: os_tpl }
-        resource_tpl: { get_input: resource_tpl }
-      agent_config: *agent_configuration
-      cloud_config: *cloud_configuration
-      occi_config: *occi_configuration
-      fabric_env:
-        <<: *fabric_env
-        host_string: { get_attribute: [dbNode, ip] } # req. by relationship ref.
 
-  apacik:
+  scipion:
     type: _NODE_WEBSERVER_
     instances:
       deploy: 1
     properties:
       fabric_env:
         <<: *fabric_env
-        host_string: { get_attribute: [webNode, ip] }
+        host_string: { get_attribute: [scipionNode, ip] }
       puppet_config:
         <<: *puppet_config
         manifests:
-          start: manifests/apache.pp
+          start: manifests/scipion.pp
     relationships:
       - type: cloudify.relationships.contained_in
-        target: webNode
-      - type: example.relationships.puppet.connected_to
-        target: db
-        target_interfaces:
-          cloudify.interfaces.relationship_lifecycle:
-            postconfigure:
-              inputs:
-                manifest: manifests/db.pp
+        target: scipionNode
 
-  db:
-    type: _NODE_DBMS_
-    properties:
-      fabric_env:
-        <<: *fabric_env
-        host_string: { get_attribute: [dbNode, ip] }
-      puppet_config:
-        <<: *puppet_config
-        manifests:
-          start: manifests/db.pp
-        hiera:
-          mydb::name: { get_input: db_name }
-          mydb::user: { get_input: db_user }
-          mydb::password: { get_input: db_password}
-          postgresql::server::listen_addresses: '*'
-          postgresql::server::ipv4acls:
-            - 'host all all 0.0.0.0/0 md5'
-    relationships:
-      - type: cloudify.relationships.contained_in
-        target: dbNode
 
 outputs:
   endpoint:
     description: Web application endpoint
     value:
-      url: { concat: ['http://', { get_attribute: [webNode, ip] }] }
+      url: { concat: ['http://', { get_attribute: [scipionNode, ip] }] }
+
 
 # vim: set syntax=yaml
