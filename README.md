@@ -1,11 +1,11 @@
 # One Node Scipion Web Tools Portal
 
-This is an example of deployment of one node Scipion Web Tools portal
-started via FedCloud OCCI. Service deployment is managed by custom
+This is an example of deployment of one node Scipion Web Tools (https://github.com/I2PC/scipion-web) portal
+started via OCCI on EGI FedCloud. Service deployment is managed by custom
 Puppet interface which supports r10k (Puppetfile), Hiera bindings
 and access to Cloudify context (ctx). Tested on CentOS 7.x.
 
-This example was prepared for purposes of Cloud Orchestration Training  organized by MU within H2020 West-Life project.
+This example was prepared for purposes of *Cloud Orchestration Training* organized by MU within H2020 West-Life project (http://about.west-life.eu/).
 
 ## Standalone Cloudify
 
