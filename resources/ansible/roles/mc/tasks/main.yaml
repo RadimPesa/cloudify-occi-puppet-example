@@ -1,0 +1,4 @@
+---
+  
+- name: prvni tasks
+  yum: name=mc state=present

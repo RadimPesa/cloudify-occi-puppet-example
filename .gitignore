@@ -1,6 +1,24 @@
 # Cloudify local storage
 local-storage/
 
+#Scipion binary
+resources/scipion_v1.0.1_2016-06-30_linux64.tgz
+
+
+# Sensitive data
+resources/ssh*/
+resources/puppet.tar.gz
+
+# Generated blueprints
+cfy-example-blueprint.yaml
+cfy-example-inputs.yaml
+cfy-scipion-blueprint.yaml
+cfy-scipion-inputs.yaml
+
+
+# Other
+get-cloudify.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

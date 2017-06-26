@@ -1,9 +1,9 @@
-INPUTS=example-inputs.yaml
+INPUTS=scipion-inputs.yaml
 M4INPUTS=$(INPUTS).m4
-BLUEPRINT=example-blueprint.yaml
+BLUEPRINT=scipion-blueprint.yaml
 M4BLUEPRINT=$(BLUEPRINT).m4
-CFM_BLUEPRINT=example
-CFM_DEPLOYMENT=example
+CFM_BLUEPRINT=scipion
+CFM_DEPLOYMENT=scipion
 RETRIES=10
 VIRTUAL_ENV?=~/cfy
 
@@ -14,10 +14,6 @@ blueprints: cfy-$(BLUEPRINT) cfm-$(BLUEPRINT)
 
 cfy-$(BLUEPRINT): $(M4BLUEPRINT)
 	m4 $? >".$@"
-	mv ".$@" $@
-
-cfm-$(BLUEPRINT): $(M4BLUEPRINT)
-	m4 -D_CFM_ $? >".$@"
 	mv ".$@" $@
 
 # inputs
@@ -46,11 +42,6 @@ cfy-undeploy: cfy-exec-uninstall
 
 cfy-test: cfy-deploy cfy-undeploy
 
-cfm-deploy: cfm-init cfm-exec-install
-
-cfm-test: cfm-deploy cfm-exec-uninstall cfm-clean
-
-
 ### Resources ####################################
 
 resources/ssh/id_rsa:
@@ -65,26 +56,12 @@ resources/puppet.tar.gz: resources/puppet/
 
 cfy-init: cfy-$(BLUEPRINT) cfy-$(INPUTS) resources/puppet.tar.gz
 	cfy local init -p cfy-$(BLUEPRINT) -i cfy-$(INPUTS) --install-plugins
+#	cfy install cfy-$(BLUEPRINT) -i cfy-$(INPUTS) --install-plugins
 
 # execute deployment
 cfy-exec-%:
 	cfy local execute -w $* --task-retries $(RETRIES)
-
-
-### Cloudify Manager managed deployment ##########
-
-cfm-init: cfm-$(BLUEPRINT) cfm-$(INPUTS) resources/puppet.tar.gz
-	cfy blueprints upload -b $(CFM_BLUEPRINT) -p cfm-$(BLUEPRINT)
-	cfy deployments create -b $(CFM_BLUEPRINT) -d $(CFM_DEPLOYMENT) -i cfm-$(INPUTS)
-
-cfm-exec-%:
-	cfy executions start -d $(CFM_DEPLOYMENT) -w $*
-	sleep 10
-
-cfm-clean:
-	cfy deployments delete -d $(CFM_DEPLOYMENT)
-	cfy blueprints delete -b $(CFM_BLUEPRINT)
-
+#	cfy execute -w $* --task-retries $(RETRIES)
 
 ### Bootstrap cfy ################################
 
@@ -93,5 +70,5 @@ bootstrap:
 	which virtualenv || ( yum install -y python-virtualenv || apt-get install -y python-virtualenv )
 	which pip || ( yum install -y python-pip || apt-get install -y python-pip )
 	wget -O get-cloudify.py 'http://repository.cloudifysource.org/org/cloudify3/get-cloudify.py'
-	python get-cloudify.py -e $(VIRTUAL_ENV)
+	python get-cloudify.py --version 3.3.1 -e $(VIRTUAL_ENV)
 	unlink get-cloudify.py

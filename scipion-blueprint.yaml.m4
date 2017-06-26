@@ -1,4 +1,4 @@
-include(example-macros.m4)dnl
+include(scipion-macros.m4)dnl
 tosca_definitions_version: cloudify_dsl_1_2
 
 description: >
@@ -9,10 +9,18 @@ imports:
   - http://getcloudify.org/spec/fabric-plugin/1.3.1/plugin.yaml
   - http://getcloudify.org/spec/diamond-plugin/1.3.1/plugin.yaml
   - https://raw.githubusercontent.com/vholer/cloudify-occi-plugin-experimental/master/plugin.yaml
+  #- https://raw.githubusercontent.com/riskfocus/cloudify-ansible-plugin/master/plugin.yaml
+  #- https://raw.githubusercontent.com/Vidya35/cloudify-ansible-plugin/master/plugin.yaml
+  - https://raw.githubusercontent.com/RadimPesa/cloudify-ansible-plugin/master/plugin.yaml
+  #- https://raw.githubusercontent.com/cloudify-cosmo/cloudify-ansible-plugin/master/plugin.yaml
   - types/puppet.yaml
   - types/dbms.yaml
   - types/server.yaml
   - types/webserver.yaml
+
+
+#plugins:
+#  ansible_plugin:
 
 inputs:
   # OCCI
@@ -54,6 +62,8 @@ inputs:
     type: string
   resource_tpl:
     type: string
+  os_availability_zone:
+    type: string
 
 dsl_definitions:
   occi_configuration: &occi_configuration
@@ -85,43 +95,75 @@ dsl_definitions:
     download: resources/puppet.tar.gz
 
 node_templates:
-  scipionNode:
+  apacheNode:
     type: _NODE_SERVER_
     properties:
       name: 'Cloudify example web node'
       resource_config:
         os_tpl: { get_input: os_tpl }
         resource_tpl: { get_input: resource_tpl }
+        availability_zone: { get_input: os_availability_zone }
       agent_config: *agent_configuration
       cloud_config: *cloud_configuration
       occi_config: *occi_configuration
       fabric_env:
         <<: *fabric_env
-        host_string: { get_attribute: [scipionNode, ip] } # req. by relationship ref.
+        host_string: { get_attribute: [apacheNode, ip] } # req. by relationship ref.
 
-
-  scipion:
-    type: _NODE_WEBSERVER_
-    instances:
-      deploy: 1
-    properties:
-      fabric_env:
-        <<: *fabric_env
-        host_string: { get_attribute: [scipionNode, ip] }
-      puppet_config:
-        <<: *puppet_config
-        manifests:
-          start: manifests/scipion.pp
+  my_app:
+    type: cloudify.nodes.ApplicationModule
+    interfaces:
+      cloudify.interfaces.lifecycle:
+        configure:
+          implementation: ansible.ansible_plugin.tasks.configure
+          inputs:
+            user: cfy
+            key: resources/ssh/id_rsa
+        start:
+          implementation: ansible.ansible_plugin.tasks.ansible_playbook
+          inputs:
+            inventory:
+              - { get_attribute: [ apacheNode, ip ] }
+#              - hosts
+#               - []
+            playbooks:
+              - resources/ansible/scipion.yaml
     relationships:
       - type: cloudify.relationships.contained_in
-        target: scipionNode
+        target: apacheNode
+
+
+#  ansible:
+#    type: ansible.nodes.Ansible
+#    properties:
+#      playbook_file_name: main.yaml
+#    relationships:
+#      - type: ansible.relationships.contained_in
+#        target: apacheNode
+
+
+#  apache:
+#    type: _NODE_WEBSERVER_
+#    instances:
+#      deploy: 1
+#    properties:
+#      fabric_env:
+#        <<: *fabric_env
+#        host_string: { get_attribute: [apacheNode, ip] }
+#      puppet_config:
+#        <<: *puppet_config
+#        manifests:
+#          start: manifests/apache.pp
+#    relationships:
+#      - type: cloudify.relationships.contained_in
+#        target: apacheNode
 
 
 outputs:
   endpoint:
     description: Web application endpoint
     value:
-      url: { concat: ['http://', { get_attribute: [scipionNode, ip] }] }
+      url: { concat: ['http://', { get_attribute: [apacheNode, ip] }] }
 
 
 # vim: set syntax=yaml
