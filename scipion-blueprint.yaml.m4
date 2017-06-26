@@ -10,11 +10,10 @@ imports:
   - http://getcloudify.org/spec/diamond-plugin/1.3.1/plugin.yaml
   - https://raw.githubusercontent.com/vholer/cloudify-occi-plugin-experimental/master/plugin.yaml
   - https://raw.githubusercontent.com/RadimPesa/cloudify-ansible-plugin/master/plugin.yaml
+  - types/puppet.yaml
+  - types/server.yaml
+  - types/webserver.yaml
 
-
-
-#  - types/server.yaml
-#  - types/webserver.yaml
 
 inputs:
   # OCCI

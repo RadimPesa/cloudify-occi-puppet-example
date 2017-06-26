@@ -3,6 +3,10 @@
   hosts: all
   sudo: yes
   gather_facts: false
+  vars:
+    scipion_home_dir: "/opt/scipion"
+    user_name: "cfy"
+    scipion_config_file: "/opt/scipion/config/scipion.conf"
   tasks:
     - name: prvni tasks
       yum: name=mc state=present
@@ -29,3 +33,38 @@
       unarchive:
         src: /home/cuda/cloudify-occi-scipion/resources/scipion_v1.0.1_2016-06-30_linux64.tgz
         dest: /opt
+
+    - name: Change owner
+      file:
+        path: /opt/scipion
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        recurse: yes
+
+    - name: Run config
+      command: "/usr/bin/python {{ scipion_home_dir }}/scipion config --overwrite"
+      become: yes
+      become_user: "{{ user_name }}"
+
+    - name: Change scipion.config 1
+      lineinfile:
+        dest: "{{ scipion_config_file }}"
+        regexp: '^MPI_LIBDIR'
+        line: 'MPI_LIBDIR = /usr/lib64/openmpi/lib'
+
+    - name: Change scipion.config 2
+      lineinfile:
+        dest: "{{ scipion_config_file }}"
+        regexp: '^MPI_INCLUDE'
+        line: 'MPI_INCLUDE = /usr/include/openmpi-x86_64'
+
+    - name: Change scipion.config 3
+      lineinfile:
+        dest: "{{ scipion_config_file }}"
+        regexp: '^MPI_BINDIR'
+        line: 'MPI_BINDIR = /usr/lib64/openmpi/bin'
+
+    - name: Run config
+      command: "/usr/bin/python {{ scipion_home_dir }}/scipion config"
+      become: yes
+      become_user: "{{ user_name }}"
