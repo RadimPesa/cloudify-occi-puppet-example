@@ -33,4 +33,4 @@ os_availability_zone: 'uuid_fedcloud_cerit_sc_103'
 resource_tpl: 'mem_small'
 #resource_tpl:  'extra_large'
 
-# vim: set syntax=yaml
+scipion_volume_size: 100
