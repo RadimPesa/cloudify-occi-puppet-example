@@ -1,6 +1,7 @@
 
 - name: install scipion prerequisities
   hosts: all
+  remote_user: cfy
   sudo: yes
   gather_facts: false
   vars:
